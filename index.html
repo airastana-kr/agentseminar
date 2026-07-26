@@ -133,6 +133,21 @@
     opacity: 0;
     animation: fadeUp 1s ease 2.2s forwards;
   }
+  .rsvp-jump {
+    display: inline-block;
+    margin-top: 26px;
+    padding: 11px 30px;
+    border: 1px solid rgba(201,173,116,.65);
+    border-radius: 999px;
+    color: var(--gold-pale);
+    text-decoration: none;
+    font-size: 14px; font-weight: 600;
+    letter-spacing: 1px;
+    opacity: 0;
+    animation: fadeUp 1s ease 2.6s forwards;
+    transition: background .2s ease, transform .15s ease;
+  }
+  .rsvp-jump:hover { background: rgba(155,128,77,.22); transform: translateY(-2px); }
   @media (max-width: 760px) {
     .hero-text { padding: 0 20px 58px; margin-top: -8px; }
     .title { letter-spacing: .5px; }
@@ -394,7 +409,7 @@
 
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation: none !important; transition: none !important; }
-    .banner-wrap, .invite-line, .title, .date-badge, .venue-line,
+    .banner-wrap, .invite-line, .title, .date-badge, .venue-line, .rsvp-jump,
     .card, .photo-card, .map-card, .lucky { opacity: 1; transform: none; }
     .map-ink { clip-path: none !important; }
     .hub-pulse { display: none; }
@@ -417,6 +432,7 @@
     </h1>
     <div class="date-badge">2026년 9월 3일 (목) 10:00 – 13:00</div>
     <div class="venue-line">📍 롯데호텔 서울 2F 에메랄드룸</div>
+    <div><a class="rsvp-jump" href="#rsvp">참석 회신 바로가기 ▾</a></div>
   </div>
 </header>
 
@@ -491,7 +507,7 @@
       <p><span class="hl">에어아스타나 왕복항공권</span>을 포함한<br>다양한 경품이 준비되어 있습니다.</p>
     </section>
 
-    <section class="card rsvp">
+    <section class="card rsvp" id="rsvp">
       <p>귀사의 소중한 참석을 기다립니다.<br>아래 버튼을 눌러 참석 여부를 회신해 주세요.</p>
       <a class="btn-rsvp" href="https://forms.gle/wqxjofoFoURFsbMu6" target="_blank" rel="noopener">참석 회신하기</a>
       <p class="deadline">※ 회신 마감: 2026년 8월 14일 (금)</p>
