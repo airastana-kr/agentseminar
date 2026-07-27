@@ -54,43 +54,38 @@
     from { opacity: 0; transform: translateY(12px); }
     to   { opacity: 1; transform: translateY(0); }
   }
-  /* 꼬리날개 금가루 반짝임 오버레이 */
-  .tail-sparkle {
+  /* 금가루 반짝임: 원본 사진 속 입자만 추출(twinkle1~3.png)해 밝기를 3위상으로 순환 —
+     입자의 위치·개수·분포는 원본과 100% 동일, 밝기만 숨쉬듯 변함 */
+  .twinkle {
     position: absolute; inset: 0;
-    pointer-events: none;
-    z-index: 2;
-  }
-  .dust {
-    position: absolute;
-    aspect-ratio: 1;
-    border-radius: 50%;
-    background: #ffedc2;
-    box-shadow: 0 0 5px 1px rgba(255,224,160,.55);
-    opacity: .1;
-    animation: dustTwinkle var(--dur) ease-in-out var(--del) infinite alternate;
-  }
-  @keyframes dustTwinkle {
-    from { opacity: .08; }
-    to   { opacity: .85; }
-  }
-  .glint {
-    position: absolute;
-    aspect-ratio: 1;
+    width: 100%;
+    mix-blend-mode: screen;
     opacity: 0;
-    animation: glintPop var(--dur) ease-in-out var(--del) infinite;
+    animation: twk var(--dur) ease-in-out var(--del) infinite alternate;
+    pointer-events: none;
   }
-  .glint::before, .glint::after {
-    content: "";
-    position: absolute; left: 50%; top: 50%;
-    transform: translate(-50%, -50%);
-    background: linear-gradient(to bottom, transparent, rgba(255,236,190,.9) 35%, #fff 50%, rgba(255,236,190,.9) 65%, transparent);
-    border-radius: 50%;
+  @keyframes twk {
+    from { opacity: 0; }
+    to   { opacity: .95; }
   }
-  .glint::before { width: 8%; height: 100%; }
-  .glint::after  { width: 100%; height: 8%; }
-  @keyframes glintPop {
-    0%, 100% { opacity: 0; transform: scale(.92) rotate(var(--rot)); }
-    50%      { opacity: .7; transform: scale(1) rotate(var(--rot)); }
+  .sheen {
+    position: absolute;
+    top: -10%; bottom: 22%;
+    left: 55%;
+    width: 14%;
+    background: linear-gradient(105deg, transparent, rgba(255,236,190,.32), transparent);
+    filter: blur(7px);
+    mix-blend-mode: screen;
+    pointer-events: none;
+    opacity: 0;
+    animation: sheenMove 7s ease-in-out 2s infinite;
+  }
+  @keyframes sheenMove {
+    0%   { transform: skewX(-12deg) translateX(-160%); opacity: 0; }
+    10%  { opacity: 1; }
+    38%  { opacity: 1; }
+    48%  { transform: skewX(-12deg) translateX(300%); opacity: 0; }
+    100% { transform: skewX(-12deg) translateX(300%); opacity: 0; }
   }
 
   .star {
@@ -451,7 +446,7 @@
     .banner-wrap, .invite-line, .title, .date-badge, .venue-line, .rsvp-jump,
     .card, .photo-card, .map-card, .lucky { opacity: 1; transform: none; }
     .map-ink { clip-path: none !important; }
-    .hub-pulse, .tail-sparkle { display: none; }
+    .hub-pulse, .twinkle, .sheen { display: none; }
   }
 </style>
 </head>
@@ -460,7 +455,10 @@
 <header class="hero">
   <div class="banner-wrap">
     <img src="img/slide1.jpg" alt="Air Astana — Skytrax Best Airline Central Asia and CIS">
-    <div class="tail-sparkle" id="tailSparkle"></div>
+    <img class="twinkle" src="img/twinkle1.png" alt="" aria-hidden="true" style="--dur:1.3s;--del:0s">
+    <img class="twinkle" src="img/twinkle2.png" alt="" aria-hidden="true" style="--dur:1.7s;--del:.5s">
+    <img class="twinkle" src="img/twinkle3.png" alt="" aria-hidden="true" style="--dur:2.1s;--del:1.1s">
+    <div class="sheen"></div>
     <div class="banner-fade"></div>
   </div>
   <div id="sky" style="position:absolute;inset:0;z-index:2;pointer-events:none;"></div>
@@ -574,32 +572,6 @@
     s.style.animationDelay = (Math.random() * 3).toFixed(2) + 's';
     s.style.animationDuration = (2 + Math.random() * 3).toFixed(2) + 's';
     sky.appendChild(s);
-  }
-
-  // 꼬리날개 금가루 반짝임: 배너 우측(꼬리 주변) 영역에만 골드 입자·섬광 생성
-  const sparkle = document.getElementById('tailSparkle');
-  const rnd = (a, b) => a + Math.random() * (b - a);
-  const biased = (a, b) => a + ((Math.random() + Math.random()) / 2) * (b - a);
-  for (let i = 0; i < 42; i++) {
-    const d = document.createElement('div');
-    d.className = 'dust';
-    d.style.width = rnd(0.1, 0.28).toFixed(2) + '%';
-    d.style.left = biased(60, 95).toFixed(1) + '%';
-    d.style.top = biased(6, 62).toFixed(1) + '%';
-    d.style.setProperty('--dur', rnd(1.1, 2.4).toFixed(2) + 's');
-    d.style.setProperty('--del', rnd(0, 3).toFixed(2) + 's');
-    sparkle.appendChild(d);
-  }
-  for (let i = 0; i < 6; i++) {
-    const g = document.createElement('div');
-    g.className = 'glint';
-    g.style.width = rnd(0.7, 1.4).toFixed(2) + '%';
-    g.style.left = biased(64, 92).toFixed(1) + '%';
-    g.style.top = biased(10, 55).toFixed(1) + '%';
-    g.style.setProperty('--dur', rnd(3.5, 5.5).toFixed(2) + 's');
-    g.style.setProperty('--del', rnd(0, 8).toFixed(2) + 's');
-    g.style.setProperty('--rot', Math.floor(rnd(-25, 25)) + 'deg');
-    sparkle.appendChild(g);
   }
 
   // 스크롤 시 카드 등장
