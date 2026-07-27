@@ -54,28 +54,24 @@
     from { opacity: 0; transform: translateY(12px); }
     to   { opacity: 1; transform: translateY(0); }
   }
-  /* 금가루 반짝임: 원본 사진 속 입자만 추출(twinkle1~3.png)해 밝기를 3위상으로 순환 —
-     입자의 위치·개수·분포는 원본과 100% 동일, 밝기만 숨쉬듯 변함 */
-  .twinkle {
-    position: absolute; inset: 0;
-    width: 100%;
-    mix-blend-mode: screen;
+  /* 금가루 반짝임: 사진에서 추출한 원본 입자 좌표 위에서만 작은 점광이 찰나에 점멸 —
+     위치·분포는 원본 그대로, 크기 고정, 번짐 없음 */
+  .spark {
+    position: absolute;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,.95) 0%, rgba(255,240,205,.55) 35%, transparent 70%);
+    box-shadow: 0 0 12px 3px rgba(255,232,180,.55);
+    transform: translate(-50%, -50%);
     opacity: 0;
-    animation: twk var(--dur) ease-in-out var(--del) infinite alternate;
+    animation: sparkFlash var(--dur) linear var(--del) infinite;
     pointer-events: none;
   }
-  @keyframes twk {
-    from { opacity: 0; }
-    to   { opacity: 1; }
-  }
-  .twinkle.dark {
-    mix-blend-mode: normal;
-    filter: brightness(0);
-    animation-name: twkDark;
-  }
-  @keyframes twkDark {
-    from { opacity: 0; }
-    to   { opacity: .55; }
+  @keyframes sparkFlash {
+    0%, 84% { opacity: 0; }
+    90%     { opacity: .95; }
+    96%     { opacity: .3; }
+    100%    { opacity: 0; }
   }
 
   .star {
@@ -436,7 +432,7 @@
     .banner-wrap, .invite-line, .title, .date-badge, .venue-line, .rsvp-jump,
     .card, .photo-card, .map-card, .lucky { opacity: 1; transform: none; }
     .map-ink { clip-path: none !important; }
-    .hub-pulse, .twinkle { display: none; }
+    .hub-pulse, .spark { display: none; }
   }
 </style>
 </head>
@@ -445,12 +441,7 @@
 <header class="hero">
   <div class="banner-wrap">
     <img src="img/slide1.jpg" alt="Air Astana — Skytrax Best Airline Central Asia and CIS">
-    <img class="twinkle" src="img/twinkle1.png" alt="" aria-hidden="true" style="--dur:1s;--del:0s">
-    <img class="twinkle" src="img/twinkle2.png" alt="" aria-hidden="true" style="--dur:1.4s;--del:.4s">
-    <img class="twinkle" src="img/twinkle3.png" alt="" aria-hidden="true" style="--dur:1.8s;--del:.9s">
-    <img class="twinkle dark" src="img/twinkle1.png" alt="" aria-hidden="true" style="--dur:1s;--del:1s">
-    <img class="twinkle dark" src="img/twinkle2.png" alt="" aria-hidden="true" style="--dur:1.4s;--del:1.8s">
-    <img class="twinkle dark" src="img/twinkle3.png" alt="" aria-hidden="true" style="--dur:1.8s;--del:2.7s">
+    <div id="sparkLayer" style="position:absolute;inset:0;pointer-events:none;"></div>
     <div class="banner-fade"></div>
   </div>
   <div id="sky" style="position:absolute;inset:0;z-index:2;pointer-events:none;"></div>
@@ -565,6 +556,20 @@
     s.style.animationDuration = (2 + Math.random() * 3).toFixed(2) + 's';
     sky.appendChild(s);
   }
+
+  // 금가루 점멸: 사진에서 추출한 원본 입자 좌표 위에서만 찰나의 점광
+  const SPARK_POINTS = [[83.88,44.33],[82.25,18.67],[84.06,37.44],[85.44,25.78],[84.5,12.22],[83.75,33],[85.12,33.56],[85.44,36.22],[99.19,34.11],[83.56,42.44],[85.12,30.78],[94.69,18.56],[84.81,38.67],[85.75,33.78],[99.88,31.89],[92.81,20.11],[67.38,46.56],[99.44,43.89],[96.94,30.78],[92.38,19.78],[97.06,26.33],[99.56,37.44],[92.31,22.22],[66.69,48.56],[85.12,34.44],[90.62,21.33],[84.19,40.11],[90.94,23.67],[89.75,22.22],[87.44,29.44],[89.06,26.44],[91.88,27.78],[94.31,23.89],[81.06,55.22],[84.69,35.78],[83.69,40.44],[94.25,21.78],[84.44,40.67],[95.62,33.44],[84.88,34],[90,27.78],[98.31,33.89],[78.5,62],[84.62,39.33],[97.5,38],[66.44,50.89],[84.06,36.67],[99.12,26.44],[95.19,28.11],[77.75,60.11],[98.81,39.78],[96.75,36.11],[88.06,27.22],[53.25,29.44],[78.38,59],[83.31,39.89],[92.38,24.78],[94.56,25.67],[93.06,27.56],[99.75,47.67],[87.19,32.67],[83.75,46.89],[97.38,35.56],[98.19,32.22],[94.94,48],[91.69,32.11],[80.88,58.56],[85,36.11],[84.12,35],[91.94,31.56],[95.25,37.56],[89.56,25.78],[84.12,39.56],[90.75,24.78],[95.62,34.44],[88.5,29.11],[95.31,38.22],[96.69,52.33],[96.75,23.67],[93,31.22],[79.94,58.11],[96.5,34.56],[97.38,31.56],[95.25,45.78],[95.25,31.33],[97.44,32.56],[94.94,27.33],[83.19,37],[97.81,31.89],[67.88,52.44],[93.94,31.89],[94.62,28.33],[89.88,28.67],[96.44,40.89],[97.25,43.67],[96,29],[93.31,29],[92.88,25.33],[95.38,35],[91.31,23.11],[84.31,34.33],[96.25,29.22],[86.06,35.33],[80.06,60.44],[98.81,34.44],[91.81,29.67],[84.12,71.78],[98,32.89],[96.12,27.78],[96.88,49.56],[94.44,38.33],[98,37.22],[94.56,39],[90.81,30.11],[93.81,30.33],[96.38,45.44],[94.5,29.56],[95.31,34],[96,32.78],[92.75,29.44],[83.38,34.11],[95.81,29],[97.19,39.33],[95.19,34.44],[92.81,32.89],[85.81,38.11],[95.12,36.67],[85.56,39.11],[95.5,43.33],[92.69,33.67],[97.25,32.44],[96.56,42.89],[94.88,39],[94,31],[86.25,37.11],[97,32.33],[93.69,31.44],[93.88,33.11],[85.19,44.33],[85.38,42.33],[89.56,35.11],[94,40.22],[96.69,35.11],[93,37],[95.38,32.44],[91.31,31],[90.94,37],[92.56,32.67],[95.5,35.89],[92.81,34.56]];
+  const sparkLayer = document.getElementById('sparkLayer');
+  SPARK_POINTS.forEach(([x, y]) => {
+    const s = document.createElement('div');
+    s.className = 'spark';
+    s.style.left = x + '%';
+    s.style.top = y + '%';
+    s.style.width = (0.3 + Math.random() * 0.25).toFixed(2) + '%';
+    s.style.setProperty('--dur', (2.2 + Math.random() * 2.6).toFixed(2) + 's');
+    s.style.setProperty('--del', (Math.random() * 4.8).toFixed(2) + 's');
+    sparkLayer.appendChild(s);
+  });
 
   // 스크롤 시 카드 등장
   const io = new IntersectionObserver(entries => {
