@@ -68,25 +68,6 @@
     from { opacity: 0; }
     to   { opacity: .95; }
   }
-  .sheen {
-    position: absolute;
-    top: -10%; bottom: 22%;
-    left: 55%;
-    width: 14%;
-    background: linear-gradient(105deg, transparent, rgba(255,236,190,.32), transparent);
-    filter: blur(7px);
-    mix-blend-mode: screen;
-    pointer-events: none;
-    opacity: 0;
-    animation: sheenMove 7s ease-in-out 2s infinite;
-  }
-  @keyframes sheenMove {
-    0%   { transform: skewX(-12deg) translateX(-160%); opacity: 0; }
-    10%  { opacity: 1; }
-    38%  { opacity: 1; }
-    48%  { transform: skewX(-12deg) translateX(300%); opacity: 0; }
-    100% { transform: skewX(-12deg) translateX(300%); opacity: 0; }
-  }
 
   .star {
     position: absolute; border-radius: 50%;
@@ -446,7 +427,7 @@
     .banner-wrap, .invite-line, .title, .date-badge, .venue-line, .rsvp-jump,
     .card, .photo-card, .map-card, .lucky { opacity: 1; transform: none; }
     .map-ink { clip-path: none !important; }
-    .hub-pulse, .twinkle, .sheen { display: none; }
+    .hub-pulse, .twinkle { display: none; }
   }
 </style>
 </head>
@@ -458,7 +439,6 @@
     <img class="twinkle" src="img/twinkle1.png" alt="" aria-hidden="true" style="--dur:1.3s;--del:0s">
     <img class="twinkle" src="img/twinkle2.png" alt="" aria-hidden="true" style="--dur:1.7s;--del:.5s">
     <img class="twinkle" src="img/twinkle3.png" alt="" aria-hidden="true" style="--dur:2.1s;--del:1.1s">
-    <div class="sheen"></div>
     <div class="banner-fade"></div>
   </div>
   <div id="sky" style="position:absolute;inset:0;z-index:2;pointer-events:none;"></div>
